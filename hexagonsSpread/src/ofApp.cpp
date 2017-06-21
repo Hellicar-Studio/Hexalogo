@@ -46,13 +46,15 @@ void ofApp::setup(){
         addNeighbors(&hexs, hexs[i]);
     }
     for(int i = 0; i < hexs.size(); i++) {
-        if(ofRandom(1) < 0.8)
-            hexs[i]->setFilled(true);
+		if (ofRandom(1.0) < 0.3)
+			hexs[i]->setFilled(true);
+		else
+			hexs[i]->setFilled(false);
     }
     
     ofBackground(0);
     ofSetLineWidth(2);
-    ofHideCursor();
+    //ofHideCursor();
 }
 
 //--------------------------------------------------------------
@@ -71,8 +73,8 @@ void ofApp::draw(){
         if(hexs[i]->isFilled()) hexs[i]->drawFull();
     }
     
-//    gui.draw();
-//    drawPalette();
+    gui.draw();
+    drawPalette();
 }
 
 void ofApp::drawPalette() {
@@ -160,7 +162,6 @@ void ofApp::addNeighbors(vector<Hexagon*>* hexLib, Hexagon* root, int num) {
 void ofApp::findAllNeighbors(vector<Hexagon*>* hexLib) {
     for(int i = 0; i < hexLib->size(); i++) {
         (*hexLib)[i]->findNeighbors(hexLib);
-        cout<<(*hexLib)[i]<<endl;
     }
 }
 
@@ -217,10 +218,12 @@ void ofApp::keyPressed(int key){
             addNeighbors(&hexs, hexs[i]);
         }
         
-        for(int i = 0; i < hexs.size(); i++) {
-            if(ofRandom(1) < 0.3)
-                hexs[i]->setFilled(true);
-        }
+		for (int i = 0; i < hexs.size(); i++) {
+			if (ofRandom(1.0) < 0.3)
+				hexs[i]->setFilled(true);
+			else
+				hexs[i]->setFilled(false);
+		}
     }
 }
 
