@@ -53,7 +53,7 @@ void Hexagon::drawEmpty() {
 }
 
 void Hexagon::drawDebug() {
-    ofPushMatrix();
+	ofPushStyle();
     ofNoFill();
     ofSetColor(0);
     for(int i = 0; i < neighbors.size(); i++) {
@@ -63,7 +63,7 @@ void Hexagon::drawDebug() {
             ofDrawCircle(pos + end, 5);
         }
     }
-    ofPopMatrix();
+    ofPopStyle();
 }
 
 void Hexagon::setColorsCube(vector<ofColor>* _cols){
@@ -94,7 +94,7 @@ void Hexagon::findNeighbors(vector<Hexagon*>* _hexs) {
     float angle = 0;
     int numNeighbors = 0;
     for(int i = 0; i < neighbors.size(); i++) {
-        ofVec2f neighborGuess = ofVec2f(cos(angle) * (size*2 + spacing), -sin(angle) * (size*2 + spacing));
+        ofVec2f neighborGuess = ofVec2f(cos(angle) * (size*2), -sin(angle) * (size*2));
         neighborGuess = pos + neighborGuess;
         for(int j = 0; j < _hexs->size(); j++) {
             float dist = ((*_hexs)[j]->getPosition() - neighborGuess).length();

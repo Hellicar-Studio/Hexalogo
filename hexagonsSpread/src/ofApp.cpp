@@ -21,12 +21,15 @@ void ofApp::setup(){
     img.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
     
     index = 0;
+
+	addHexLayer();
     
-	generateGrid();
+	randomizeGrid();
     
     ofBackground(0);
     ofSetLineWidth(2);
     //ofHideCursor();
+
 }
 
 //--------------------------------------------------------------
@@ -44,6 +47,9 @@ void ofApp::draw(){
     for(int i = 0 ; i < hexs.size(); i++) {
         if(hexs[i]->isFilled()) hexs[i]->drawFull();
     }
+	//for (int i = 0; i < index; i++) {
+	//	hexs[i]->drawDebug();
+	//}
     
     gui.draw();
     drawPalette();
@@ -110,10 +116,9 @@ vector<Hexagon*> ofApp::createNeighbors(Hexagon* root) {
             hex->setSpacing(spacing);
             int paletteIndex = palette;
             hex->setColorsCube(&(palettes[paletteIndex]));
-            ofVec2f pos = ofVec2f(cos(angle) * (size*2 + spacing), -sin(angle) * (size*2 + spacing));
+            ofVec2f pos = ofVec2f(cos(angle) * (size*2), -sin(angle) * (size*2));
             hex->setPosition(center.x + pos.x, center.y + pos.y);
             root->setNeighbor(hex, i);
-            hex->setParent(root);
             hexs.push_back(hex);
         }
         angle += angleStep;
@@ -162,31 +167,35 @@ vector<vector<ofColor>> ofApp::loadPalettes(string path) {
     return palettes;
 }
 
-void ofApp::generateGrid() {
-	hexs.clear();
-
-	hexs.resize(1);
-
-	hexs[0] = new Hexagon();
-	hexs[0]->setSize(50);
-	hexs[0]->setSpacing(0.0);
-	hexs[0]->setColorsCube(&palettes[palette]);
-	hexs[0]->setPosition(ofGetWidth() / 2, ofGetHeight() / 2);
-
-	//1
-	//7
-	//19
-
-	for (int i = 0; i < 7; i++) {
-		addNeighbors(&hexs, hexs[i]);
-	}
-
+void ofApp::randomizeGrid() {
 	for (int i = 0; i < hexs.size(); i++) {
+		hexs[i]->setColorsCube(&palettes[palette]);
 		if (ofRandom(1.0) < 0.3)
 			hexs[i]->setFilled(true);
 		else
 			hexs[i]->setFilled(false);
 	}
+}
+
+void ofApp::addHexLayer() {
+	int numHexs = hexs.size();
+	if (numHexs == 0) {
+		hexs.resize(1);
+
+		hexs[0] = new Hexagon();
+		hexs[0]->setColorsCube(&palettes[palette]);
+		hexs[0]->setSize(50);
+		hexs[0]->setSpacing(0.0);
+		hexs[0]->setPosition(ofGetWidth() / 2, ofGetHeight() / 2);
+	}
+	else {
+		for (int i = 0; i < numHexs; i++) {
+			addNeighbors(&hexs, hexs[i]);
+			findAllNeighbors(&hexs);
+		}
+		cout << "Test"<<endl;
+	}
+
 }
 
 //--------------------------------------------------------------
@@ -198,8 +207,12 @@ void ofApp::keyPressed(int key){
         img.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
         img.save("img" + ofToString(index) + ".jpg");
         index++;
-    } else {
-		generateGrid();
+	}
+	else if (key == 'a') {
+		addHexLayer();
+		cout << hexs.size() << endl;
+	} else {
+		randomizeGrid();
     }
 }
 
