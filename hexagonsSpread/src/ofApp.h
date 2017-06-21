@@ -37,7 +37,11 @@ class ofApp : public ofBaseApp{
     
         ofxPanel gui;
     
+    int index;
+    
         ofParameter<int> palette;
         ofParameter<float> size;
         ofParameter<float> spacing;
+    
+    ofImage img;
 };

@@ -1,11 +1,13 @@
 #include "ofApp.h"
+//#include <Cocoa/Cocoa.h>
+
 
 //--------------------------------------------------------------
 void ofApp::setup(){
 
     ofVec2f center = ofVec2f(ofGetWidth()/2, ofGetHeight()/2);
     
-    string colorPath = "/Users/james/Documents/openFrameworksNightly/apps/Roche_OneEurope/Color Palette/Palettes.xml";
+    string colorPath = "/Users/james/Documents/openFrameworksNightly/apps/Hexalogo/Color Palette/Palettes.xml";
     
     palettes = loadPalettes(colorPath);
     
@@ -17,7 +19,7 @@ void ofApp::setup(){
     
     gui.setup(settingsPath);
     gui.add(palette.set("Palettes", 0, 0, palettes.size()-1));
-    gui.add(size.set("Size", 50, 40, 58));
+    gui.add(size.set("Size", 52, 40, 58));
     gui.loadFromFile(settingsPath);
     
     hexs[0] = new Hexagon();
@@ -25,6 +27,16 @@ void ofApp::setup(){
     hexs[0]->setSpacing(spacing);
     hexs[0]->setColorsCube(&palettes[palette]);
     hexs[0]->setPosition(center);
+    
+    img.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
+    
+    index = 0;
+    
+    
+//    NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
+//    if(appWindow) {
+//        cout<<"got it!"<<endl;
+//    }
     
     //1
     //7
@@ -38,34 +50,9 @@ void ofApp::setup(){
             hexs[i]->setFilled(true);
     }
     
-//    addNeighbors(&hexs, hexs[ofRandom(hexs.size())]);
-//    findAllNeighbors(&hexs);
-
-    
-}
-
-vector<vector<ofColor>> ofApp::loadPalettes(string path) {
-    vector<vector<ofColor>> palettes;
-    
-    ofxXmlSettings settings;
-    bool loaded = settings.load(path);
-    int numPalettes = settings.getNumTags("Palette");
-    palettes.resize(numPalettes);
-    for(int i = 0; i < numPalettes; i++) {
-        settings.pushTag("Palette", i);
-        int numColors = settings.getNumTags("Color");
-        for(int j = 0; j < numColors; j++) {
-            string colorString = settings.getValue("Color", "255 255 255", j);
-            vector<string> colorValues = ofSplitString(colorString, " ");
-            int r = std::stoi(colorValues[0]);
-            int g = std::stoi(colorValues[1]);
-            int b = std::stoi(colorValues[2]);
-            ofColor col = ofColor(r, g, b);
-            palettes[i].push_back(col);
-        }
-        settings.popTag();
-    }
-    return palettes;
+    ofBackground(0);
+    ofSetLineWidth(2);
+    ofHideCursor();
 }
 
 //--------------------------------------------------------------
@@ -84,8 +71,8 @@ void ofApp::draw(){
         if(hexs[i]->isFilled()) hexs[i]->drawFull();
     }
     
-    gui.draw();
-    drawPalette();
+//    gui.draw();
+//    drawPalette();
 }
 
 void ofApp::drawPalette() {
@@ -178,28 +165,62 @@ void ofApp::findAllNeighbors(vector<Hexagon*>* hexLib) {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-    hexs.clear();
+vector<vector<ofColor>> ofApp::loadPalettes(string path) {
+    vector<vector<ofColor>> palettes;
     
-    hexs.resize(1);
-    
-    hexs[0] = new Hexagon();
-    hexs[0]->setSize(50);
-    hexs[0]->setSpacing(0.0);
-    hexs[0]->setColorsCube(&palettes[palette]);
-    hexs[0]->setPosition(ofGetWidth()/2, ofGetHeight()/2);
-    
-    //1
-    //7
-    //19
-    
-    for(int i = 0; i < 7; i++) {
-        addNeighbors(&hexs, hexs[i]);
+    ofxXmlSettings settings;
+    bool loaded = settings.load(path);
+    int numPalettes = settings.getNumTags("Palette");
+    palettes.resize(numPalettes);
+    for(int i = 0; i < numPalettes; i++) {
+        settings.pushTag("Palette", i);
+        int numColors = settings.getNumTags("Color");
+        for(int j = 0; j < numColors; j++) {
+            string colorString = settings.getValue("Color", "255 255 255", j);
+            vector<string> colorValues = ofSplitString(colorString, " ");
+            int r = std::stoi(colorValues[0]);
+            int g = std::stoi(colorValues[1]);
+            int b = std::stoi(colorValues[2]);
+            ofColor col = ofColor(r, g, b);
+            palettes[i].push_back(col);
+        }
+        settings.popTag();
     }
-    
-    for(int i = 0; i < hexs.size(); i++) {
-        if(ofRandom(1) < 0.3)
-            hexs[i]->setFilled(true);
+    return palettes;
+}
+
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key){
+    if(key == OF_KEY_RIGHT) {
+        palette++;
+        palette %= palettes.size();
+    } else if(key == 'c') {
+        img.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
+        img.save("img" + ofToString(index) + ".jpg");
+        index++;
+    } else {
+        hexs.clear();
+        
+        hexs.resize(1);
+        
+        hexs[0] = new Hexagon();
+        hexs[0]->setSize(50);
+        hexs[0]->setSpacing(0.0);
+        hexs[0]->setColorsCube(&palettes[palette]);
+        hexs[0]->setPosition(ofGetWidth()/2, ofGetHeight()/2);
+        
+        //1
+        //7
+        //19
+        
+        for(int i = 0; i < 7; i++) {
+            addNeighbors(&hexs, hexs[i]);
+        }
+        
+        for(int i = 0; i < hexs.size(); i++) {
+            if(ofRandom(1) < 0.3)
+                hexs[i]->setFilled(true);
+        }
     }
 }
 

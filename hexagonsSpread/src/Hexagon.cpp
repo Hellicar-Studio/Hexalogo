@@ -30,9 +30,9 @@ void Hexagon::drawFull() {
     float angle = angleStep + 30.0f / 180.0f * PI;
     for(int i = 0; i < 6; i++) {
         ofSetColor(cols[i]);
-        ofVec2f pos2 = ofVec2f(cos(angle) * size, -sin(angle) * size);
+        ofVec2f pos2 = ofVec2f(cos(angle) * (size+3), -sin(angle) * (size+3));
         angle += angleStep;
-        ofVec2f pos3 = ofVec2f(cos(angle) * size, -sin(angle) * size);
+        ofVec2f pos3 = ofVec2f(cos(angle) * (size+3), -sin(angle) * (size+3));
         ofDrawTriangle(pos, pos + pos2, pos + pos3);
     }
     ofPopStyle();
