@@ -11,10 +11,6 @@ void ofApp::setup(){
     
     palettes = loadPalettes(colorPath);
     
-    hexs.clear();
-
-    hexs.resize(1);
-    
     string settingsPath = "settings/settings.xml";
     
     gui.setup(settingsPath);
@@ -22,35 +18,11 @@ void ofApp::setup(){
     gui.add(size.set("Size", 52, 40, 58));
     gui.loadFromFile(settingsPath);
     
-    hexs[0] = new Hexagon();
-    hexs[0]->setSize(size);
-    hexs[0]->setSpacing(spacing);
-    hexs[0]->setColorsCube(&palettes[palette]);
-    hexs[0]->setPosition(center);
-    
     img.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
     
     index = 0;
     
-    
-//    NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
-//    if(appWindow) {
-//        cout<<"got it!"<<endl;
-//    }
-    
-    //1
-    //7
-    //19
-    
-    for(int i = 0; i < 7; i++) {
-        addNeighbors(&hexs, hexs[i]);
-    }
-    for(int i = 0; i < hexs.size(); i++) {
-		if (ofRandom(1.0) < 0.3)
-			hexs[i]->setFilled(true);
-		else
-			hexs[i]->setFilled(false);
-    }
+	generateGrid();
     
     ofBackground(0);
     ofSetLineWidth(2);
@@ -190,6 +162,33 @@ vector<vector<ofColor>> ofApp::loadPalettes(string path) {
     return palettes;
 }
 
+void ofApp::generateGrid() {
+	hexs.clear();
+
+	hexs.resize(1);
+
+	hexs[0] = new Hexagon();
+	hexs[0]->setSize(50);
+	hexs[0]->setSpacing(0.0);
+	hexs[0]->setColorsCube(&palettes[palette]);
+	hexs[0]->setPosition(ofGetWidth() / 2, ofGetHeight() / 2);
+
+	//1
+	//7
+	//19
+
+	for (int i = 0; i < 7; i++) {
+		addNeighbors(&hexs, hexs[i]);
+	}
+
+	for (int i = 0; i < hexs.size(); i++) {
+		if (ofRandom(1.0) < 0.3)
+			hexs[i]->setFilled(true);
+		else
+			hexs[i]->setFilled(false);
+	}
+}
+
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if(key == OF_KEY_RIGHT) {
@@ -200,30 +199,7 @@ void ofApp::keyPressed(int key){
         img.save("img" + ofToString(index) + ".jpg");
         index++;
     } else {
-        hexs.clear();
-        
-        hexs.resize(1);
-        
-        hexs[0] = new Hexagon();
-        hexs[0]->setSize(50);
-        hexs[0]->setSpacing(0.0);
-        hexs[0]->setColorsCube(&palettes[palette]);
-        hexs[0]->setPosition(ofGetWidth()/2, ofGetHeight()/2);
-        
-        //1
-        //7
-        //19
-        
-        for(int i = 0; i < 7; i++) {
-            addNeighbors(&hexs, hexs[i]);
-        }
-        
-		for (int i = 0; i < hexs.size(); i++) {
-			if (ofRandom(1.0) < 0.3)
-				hexs[i]->setFilled(true);
-			else
-				hexs[i]->setFilled(false);
-		}
+		generateGrid();
     }
 }
 

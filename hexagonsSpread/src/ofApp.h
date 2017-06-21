@@ -13,6 +13,7 @@ class ofApp : public ofBaseApp{
 		void draw();
         vector<Hexagon*> createNeighbors(Hexagon* root);
         void addNeighbors(vector<Hexagon*>* hexLibrary, Hexagon* root, int num = -1);
+		void generateGrid();
 
         vector<vector<ofColor>> loadPalettes(string path);
         void findAllNeighbors(vector<Hexagon*>* hexLib);
