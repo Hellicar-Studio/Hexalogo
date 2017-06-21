@@ -7,7 +7,7 @@ void ofApp::setup(){
 
     ofVec2f center = ofVec2f(ofGetWidth()/2, ofGetHeight()/2);
     
-    string colorPath = "/Users/james/Documents/openFrameworksNightly/apps/Hexalogo/Color Palette/Palettes.xml";
+    string colorPath = "../../../ColorPalette/Palettes.xml";
     
     palettes = loadPalettes(colorPath);
     
