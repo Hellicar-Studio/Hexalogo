@@ -11,6 +11,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxSVG.h"
 
 class Hexagon {
 public:
@@ -26,6 +27,7 @@ public:
     void setNeighbor(Hexagon* hex, int index) { if(index < 6 && index >= 0) neighbors[index] = hex; };
     void setFilled(bool val) { filled = val; };
     void setParent(Hexagon* p) { parent = p; };
+	void setSVG(ofxSVG* val) { svg = val; };
     // Getters
     void setSize(float val) { size = val; };
     ofVec2f getPosition() { return pos; };
@@ -50,16 +52,20 @@ public:
         }
         return false;
     }
+	ofxSVG* getSVG() { return svg; };
     
     // Functionality
     void drawFull();
+	void drawFullSVG();
     void drawEmpty();
+	void drawEmptySVG();
+
+	string RGBToHex(int r, int g, int b);
     
     void drawDebug();
     void findNeighbors(vector<Hexagon*>* _hexs);
     
     void updatePosition();
-        
 private:
     ofVec2f pos;
     float size;
@@ -69,6 +75,8 @@ private:
     Hexagon* parent;
     bool filled;
     float spacing;
+
+	ofxSVG* svg;
 };
 
 

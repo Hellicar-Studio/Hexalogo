@@ -4,6 +4,7 @@
 #include "Hexagon.h"
 #include "ofxXmlSettings.h"
 #include "ofxGui.h"
+//#include "ofxSVG.h"
 
 class ofApp : public ofBaseApp{
 
@@ -44,6 +45,8 @@ class ofApp : public ofBaseApp{
         ofParameter<int> palette;
         ofParameter<float> size;
         ofParameter<float> spacing;
+
+		ofxSVG svg;
     
     ofImage img;
 };

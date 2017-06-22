@@ -38,6 +38,30 @@ void Hexagon::drawFull() {
     ofPopStyle();
 }
 
+void Hexagon::drawFullSVG() {
+	if (svg == nullptr) {
+		cout << "SVG is null!" << endl;
+		return;
+	}
+	//svg->setOpacity(0.5);
+	svg->setFillOpacity(1);
+	svg->setStrokeOpacity(0);
+	float angle = angleStep + 30.0f / 180.0f * PI;
+	for (int i = 0; i < 6; i++) {
+		string hex = RGBToHex(cols[i].r, cols[i].g, cols[i].b);
+		svg->fill(hex);
+		ofVec2f pos2 = ofVec2f(cos(angle) * (size), -sin(angle) * (size));
+		angle += angleStep;
+		ofVec2f pos3 = ofVec2f(cos(angle) * (size), -sin(angle) * (size));
+		svg->beginPolygon();
+		svg->vertex(pos.x, pos.y);
+		svg->vertex(pos.x + pos2.x, pos.y + pos2.y);
+		svg->vertex(pos.x + pos3.x, pos.y + pos3.y);
+		svg->endPolygon();
+		//ofDrawTriangle(pos, pos + pos2, pos + pos3);
+	}
+}
+
 void Hexagon::drawEmpty() {
     ofPushStyle();
     ofNoFill();
@@ -50,6 +74,39 @@ void Hexagon::drawEmpty() {
         ofDrawTriangle(pos, pos + pos2, pos + pos3);
     }
     ofPopStyle();
+}
+
+void Hexagon::drawEmptySVG() {
+	if (svg == nullptr) {
+		cout << "SVG is null!" << endl;
+		return;
+	}
+	svg->stroke("#FFFFFF", 1.0);
+	svg->setFillOpacity(0);
+	svg->setStrokeOpacity(1);
+	svg->beginPolygon();
+	float angle = angleStep + 30.0f / 180.0f * PI;
+	for (int i = 0; i < 6; i++) {
+		ofVec2f pos2 = ofVec2f(cos(angle) * size, -sin(angle) * size);
+		angle += angleStep;
+		ofVec2f pos3 = ofVec2f(cos(angle) * size, -sin(angle) * size);
+		svg->vertex(pos.x + pos2.x, pos.y + pos2.y);
+		svg->vertex(pos.x + pos3.x, pos.y + pos3.y);
+	}
+	angle = angleStep + 30.0f / 180.0f * PI;
+	svg->endPolygon();
+	for (int i = 0; i < 3; i++) {
+		svg->beginPolygon();
+		ofVec2f pos2 = ofVec2f(cos(angle) * size, -sin(angle) * size);
+		ofVec2f pos3 = ofVec2f(cos(angle + PI) * size, -sin(angle + PI) * size);
+		svg->vertex(pos.x + pos2.x, pos.y + pos2.y);
+		svg->vertex(pos.x + pos3.x, pos.y + pos3.y);
+		angle += angleStep;
+		svg->endPolygon();
+	}
+
+		//svg->vertex(pos.x + pos3.x, pos.y + pos3.y);
+		//svg->vertex(pos.x, pos.y);
 }
 
 void Hexagon::drawDebug() {
@@ -105,4 +162,22 @@ void Hexagon::findNeighbors(vector<Hexagon*>* _hexs) {
         }
         angle += angleStep;
     }
+}
+
+string Hexagon::RGBToHex(int r, int g, int b) {
+	string result = "#";
+
+	char rc[255];
+	sprintf_s(rc, "%.2X", r);
+	result += rc;
+
+	char gc[255];
+	sprintf_s(gc, "%.2X", g);
+	result += gc;
+
+	char bc[255];
+	sprintf_s(bc, "%.2X", b);
+	result += bc;
+
+	return result;
 }

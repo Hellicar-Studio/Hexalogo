@@ -26,7 +26,7 @@ void ofApp::setup(){
     
 	randomizeGrid();
     
-    ofBackground(0);
+    ofBackground(127);
     ofSetLineWidth(2);
     //ofHideCursor();
 
@@ -41,18 +41,16 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    for(int i = 0 ; i < hexs.size(); i++) {
-        hexs[i]->drawEmpty();
-    }
-    for(int i = 0 ; i < hexs.size(); i++) {
-        if(hexs[i]->isFilled()) hexs[i]->drawFull();
-    }
+	for (int i = 0; i < hexs.size(); i++) {
+		if (hexs[i]->isFilled()) hexs[i]->drawFull();
+		else hexs[i]->drawEmpty();
+	}
 	//for (int i = 0; i < index; i++) {
 	//	hexs[i]->drawDebug();
 	//}
     
-    gui.draw();
-    drawPalette();
+    //gui.draw();
+    //drawPalette();
 }
 
 void ofApp::drawPalette() {
@@ -114,6 +112,7 @@ vector<Hexagon*> ofApp::createNeighbors(Hexagon* root) {
             Hexagon* hex = new Hexagon();
             hex->setSize(size);
             hex->setSpacing(spacing);
+			hex->setSVG(root->getSVG());
             int paletteIndex = palette;
             hex->setColorsCube(&(palettes[paletteIndex]));
             ofVec2f pos = ofVec2f(cos(angle) * (size*2), -sin(angle) * (size*2));
@@ -170,7 +169,7 @@ vector<vector<ofColor>> ofApp::loadPalettes(string path) {
 void ofApp::randomizeGrid() {
 	for (int i = 0; i < hexs.size(); i++) {
 		hexs[i]->setColorsCube(&palettes[palette]);
-		if (ofRandom(1.0) < 0.3)
+		if (ofRandom(1.0) < 0.5)
 			hexs[i]->setFilled(true);
 		else
 			hexs[i]->setFilled(false);
@@ -187,6 +186,7 @@ void ofApp::addHexLayer() {
 		hexs[0]->setSize(50);
 		hexs[0]->setSpacing(0.0);
 		hexs[0]->setPosition(ofGetWidth() / 2, ofGetHeight() / 2);
+		hexs[0]->setSVG(&svg);
 	}
 	else {
 		for (int i = 0; i < numHexs; i++) {
@@ -195,7 +195,6 @@ void ofApp::addHexLayer() {
 		}
 		cout << "Test"<<endl;
 	}
-
 }
 
 //--------------------------------------------------------------
@@ -204,14 +203,21 @@ void ofApp::keyPressed(int key){
         palette++;
         palette %= palettes.size();
     } else if(key == 'c') {
-        img.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-        img.save("img" + ofToString(index) + ".jpg");
-        index++;
+		svg.addLayer("layer1");
+		for (int i = 0; i < hexs.size(); i++) {
+			if (hexs[i]->isFilled()) hexs[i]->drawFullSVG();
+			else hexs[i]->drawEmptySVG();
+		}
+		svg.saveToFile("img" + ofToString(index) + ".svg");
+		svg.clear();
+		index++;
 	}
 	else if (key == 'a') {
 		addHexLayer();
 		cout << hexs.size() << endl;
 	} else {
+		palette++;
+		palette %= palettes.size();
 		randomizeGrid();
     }
 }
