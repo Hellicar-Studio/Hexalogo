@@ -5,7 +5,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-    ofVec2f center = ofVec2f(ofGetWidth()/2, ofGetHeight()/2);
+    ofVec2f center = ofVec2f(440, ofGetHeight()/2);
     
     string colorPath = "../../../ColorPalette/Palettes.xml";
     
@@ -16,7 +16,10 @@ void ofApp::setup(){
     gui.setup(settingsPath);
     gui.add(palette.set("Palettes", 0, 0, palettes.size()-1));
     gui.add(size.set("Size", 52, 40, 58));
+	gui.add(logoPos.set("Logo Position", center, ofVec3f(0, 0, 0), ofVec3f(ofGetWidth(), ofGetHeight(), 1)));
+	gui.add(textPos.set("Text Position", center, ofVec3f(0, 0, 0), ofVec3f(ofGetWidth(), ofGetHeight(), 1)));
     gui.loadFromFile(settingsPath);
+
     
     img.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
     
@@ -29,6 +32,12 @@ void ofApp::setup(){
     ofBackground(127);
     ofSetLineWidth(2);
     //ofHideCursor();
+	ofBackground(0);
+
+	guiOn = true;
+
+	logo.load("RocheLogo.png");
+	text.load("OneEurope.png");
 
 }
 
@@ -48,8 +57,21 @@ void ofApp::draw(){
 	//for (int i = 0; i < index; i++) {
 	//	hexs[i]->drawDebug();
 	//}
+
+	ofPushMatrix();
+	ofTranslate(logoPos.get().x, logoPos.get().y);
+	ofScale(logoPos.get().z, logoPos.get().z);
+	logo.draw(0, 0);
+	ofPopMatrix();
+	ofPushMatrix();
+	ofTranslate(textPos.get().x, textPos.get().y);
+	ofScale(textPos.get().z, textPos.get().z);
+	text.draw(0, 0);
+	ofPopMatrix();
     
-    //gui.draw();
+	if (guiOn) {
+		gui.draw();
+	}
     //drawPalette();
 }
 
@@ -185,7 +207,7 @@ void ofApp::addHexLayer() {
 		hexs[0]->setColorsCube(&palettes[palette]);
 		hexs[0]->setSize(50);
 		hexs[0]->setSpacing(0.0);
-		hexs[0]->setPosition(ofGetWidth() / 2, ofGetHeight() / 2);
+		hexs[0]->setPosition(440, ofGetHeight() / 2);
 		hexs[0]->setSVG(&svg);
 	}
 	else {
@@ -211,6 +233,9 @@ void ofApp::keyPressed(int key){
 		svg.saveToFile("img" + ofToString(index) + ".svg");
 		svg.clear();
 		index++;
+	}
+	else if (key == 'g') {
+		guiOn = !guiOn;
 	}
 	else if (key == 'a') {
 		addHexLayer();

@@ -45,8 +45,14 @@ class ofApp : public ofBaseApp{
         ofParameter<int> palette;
         ofParameter<float> size;
         ofParameter<float> spacing;
+		ofParameter<ofVec3f> logoPos;
+		ofParameter<ofVec3f> textPos;
 
 		ofxSVG svg;
+
+		ofImage logo, text;
+
+		bool guiOn;
     
     ofImage img;
 };
