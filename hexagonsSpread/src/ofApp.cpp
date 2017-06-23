@@ -11,9 +11,9 @@ void ofApp::setup(){
     
     palettes = loadPalettes(colorPath);
     
-    string settingsPath = "settings/settings.xml";
+    string settingsPath = "settings.xml";
     
-    gui.setup(settingsPath);
+    gui.setup("Controls", settingsPath);
     gui.add(palette.set("Palettes", 0, 0, palettes.size()-1));
     gui.add(size.set("Size", 52, 40, 58));
 	gui.add(logoPos.set("Logo Position", center, ofVec3f(0, 0, 0), ofVec3f(ofGetWidth(), ofGetHeight(), 1)));
